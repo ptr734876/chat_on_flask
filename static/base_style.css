@@ -1,0 +1,34 @@
+.body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2282d1;
+    font-family: 'Arial', sans-serif;
+    font-size: 60px;
+    flex-direction: column;
+    background-color: bisque;
+}
+.p{
+    text-align: center;
+    color: blueviolet;
+    font-family: 'Arial', sans-serif;
+    font-size: 40px;
+}
+
+.btn {
+    display: flex;                /* Flexbox для расположения в ряд */
+    gap: 20px;                   /* Расстояние между элементами */
+    margin-top: 20px;            /* Отступ сверху */
+    cursor: pointer;             /* Курсор указателя */
+    background-color: aqua;      /* Цвет фона */
+    border-radius: 15px;         /* Скругленные углы */
+    font-size: 30px;             /* Размер шрифта (исправлено size на font-size) */
+    text-decoration:currentColor;       /* Убирает подчеркивание */
+    padding: 15px 30px;          /* Внутренние отступы */
+    color: white;                /* Цвет текста */
+    border: none;                /* Убирает границу */
+    justify-content: center;     /* Центрирование содержимого */
+    align-items: center;         /* Выравнивание по вертикали */
+}

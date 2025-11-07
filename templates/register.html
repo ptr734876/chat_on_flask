@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='register_style.css') }}">
+    <title>MegaChatRegister</title>
+</head>
+<body class="body">
+    <form action="/register" method="post">
+        <div>
+            <label for="user-login">Login: </label>
+            <input type="text"
+                   id="user-login"
+                   name="login"
+                   placeholder="Enter Login"
+                   required
+                   style="width: 150px; height: 30px;">
+        </div>
+        <div>
+            <label for="user-password">Password: </label>
+            <input type="password"
+                   id="user-password"
+                   name="password"
+                   placeholder="Enter Password"
+                   required
+                   style="width: 150px; height: 30px;">
+        </div>
+                <div>
+            <label for="user-password">Repeat password: </label>
+            <input type="password"
+                   id="user-password"
+                   name="password1"
+                   placeholder="Enter Password again"
+                   required
+                   style="width: 150px; height: 30px;">
+        </div>
+        <input style="width: 100px; height: 70px;" type="submit" value="Войти">
+    </form>
+</body>
+</html>
