@@ -1,15 +1,12 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,redirect, url_for
 from database.initdb import initDB
 import sqlite3
 app = Flask(__name__)
 
-db_path = initDB('Users', {'login':'text not null', 'password':'text not null'}, 'Users.db')
+db_path = initDB('main.db')
 
 def check_is_correct(p):
-    pass
-
-def check_is_exist(p):
-    pass
+    return True
 
 @app.route('/')
 def main_page():
@@ -17,13 +14,14 @@ def main_page():
 
 @app.route('/register', methods=['POST', 'GET'])
 def register_page():
+    error = None
     if request.method == 'POST':
         username = request.form.get('login')
         password = request.form.get('password')
         password1 = request.form.get('password1')
 
         if password != password1:
-            pass
+            error = 'passwords are not the same'
         else:
             conn = sqlite3.connect(db_path)
             cursor = conn.cursor()
@@ -36,14 +34,15 @@ def register_page():
                 cursor.execute("INSERT INTO Users (login, password) VALUES (?, ?)", (username, password))
                 conn.commit()
                 conn.close()
-                return 'registered'
+                return redirect(url_for('Chatpage'))
             else:
-                return 'user already exist'
+                error =  'user already exist'
 
-    return render_template('register.html')
+    return render_template('register.html', error = error)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login_page():
+    error = None
     if request.method == 'POST':
         username = request.form.get('login')
         password = request.form.get('password')
@@ -52,9 +51,9 @@ def login_page():
             if check_is_correct(password):
                 pass
             else:
-                print('password is uncorrect')
+                error = 'password is uncorrect'
         else:
-            print('username is uncorrect')
+            error = 'username is uncorrect'
 
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor() 
@@ -63,13 +62,38 @@ def login_page():
         if user:
             real_password = user[2]
             if password == real_password:
-                return 'CHATs'
+                return redirect(url_for('Chatpage'))
             else:
-                return 'Wrong password'
+                error = 'Wrong password'
         else:
-            return 'unknown user'
+            error = 'unknown user'
 
 
-    return render_template('login.html')
+    return render_template('login.html', error = error)
+
+@app.route('/ChatPage')
+def Chatpage():
+    current_user_login = "22"
+    
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor() 
+    
+    cursor.execute("""
+        SELECT c.id, c.name, 
+               (SELECT m.messege_text FROM Messeges m 
+                WHERE m.chat_id = c.id 
+                ORDER BY m.sent_at DESC LIMIT 1) as last_message
+        FROM Chats c
+        JOIN Users_Chats uc ON c.id = uc.chat_id
+        JOIN Users u ON u.id = uc.user_id
+        WHERE u.login = ?
+    """, (current_user_login,))
+    
+    chats = cursor.fetchall()
+    conn.close()
+    
+    return render_template('chat.html', chats=chats)
+
+
 
 app.run(debug=True)
