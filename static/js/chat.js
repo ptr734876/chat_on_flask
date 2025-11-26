@@ -1,16 +1,28 @@
-// chat.js
 let currentChatId = null;
+let currentChatUsername = null;
+let currentUser = null; // Добавляем переменную для текущего пользователя
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Получаем текущего пользователя из data-атрибута
+    currentUser = document.getElementById('currentUser').getAttribute('data-username');
+    
     const chatItems = document.querySelectorAll('.chat-item');
-    const mainArea = document.getElementById('mainArea');
     const messagesContainer = document.getElementById('messagesContainer');
+    const chatHeader = document.getElementById('chatHeader');
+    const inputArea = document.getElementById('inputArea');
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
+
+    console.log('Текущий пользователь:', currentUser); // Для отладки
 
     // Обработчики для чатов
     chatItems.forEach(function(chatItem) {
         chatItem.addEventListener('click', function() {
+            // Убираем активный класс у всех чатов
+            chatItems.forEach(item => item.classList.remove('active'));
+            // Добавляем активный класс текущему чату
+            this.classList.add('active');
+            
             const chatId = this.getAttribute('data-chat-id');
             const username = this.querySelector('.username').textContent;
             
@@ -28,14 +40,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function openChat(chatId, username) {
         currentChatId = chatId;
+        currentChatUsername = username;
         
-        // Показываем основную область
-        mainArea.style.display = 'block';
+        // Показываем заголовок чата
+        chatHeader.innerHTML = `<div class="chat-title">Чат с ${username}</div>`;
+        
+        // Показываем поле ввода
+        inputArea.classList.remove('hidden');
         
         // Загружаем сообщения
         loadMessages(chatId);
         
-        // Можно добавить заголовок с именем пользователя
+        // Фокусируемся на поле ввода
+        messageInput.focus();
+        
         console.log('Открыт чат с:', username, 'ID:', chatId);
     }
 
@@ -43,7 +61,10 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(`/get_messages/${chatId}`)
             .then(response => response.json())
             .then(messages => {
-                displayMessages(messages);
+                // Если этот чат сейчас открыт - показываем сообщения
+                if (chatId === currentChatId) {
+                    displayMessages(messages);
+                }
             })
             .catch(error => {
                 console.error('Ошибка загрузки сообщений:', error);
@@ -53,14 +74,34 @@ document.addEventListener('DOMContentLoaded', function() {
     function displayMessages(messages) {
         messagesContainer.innerHTML = '';
         
+        if (messages.length === 0) {
+            messagesContainer.innerHTML = '<div class="no-messages">Нет сообщений</div>';
+            return;
+        }
+        
         messages.forEach(message => {
             const messageElement = document.createElement('div');
-            messageElement.className = 'message';
-            messageElement.innerHTML = `
-                <div class="message-sender">${message.sender}</div>
-                <div class="message-text">${message.text}</div>
-                <div class="message-time">${message.time}</div>
-            `;
+            
+            // Определяем класс для сообщения (мое или чужое)
+            const isMyMessage = message.sender === currentUser;
+            const messageClass = isMyMessage ? 'message my' : 'message other';
+            
+            messageElement.className = messageClass;
+            
+            // Для своих сообщений не показываем отправителя, для чужих - показываем
+            if (isMyMessage) {
+                messageElement.innerHTML = `
+                    <div class="message-text">${message.text}</div>
+                    <div class="message-time">${message.time}</div>
+                `;
+            } else {
+                messageElement.innerHTML = `
+                    <div class="message-sender">${message.sender}</div>
+                    <div class="message-text">${message.text}</div>
+                    <div class="message-time">${message.time}</div>
+                `;
+            }
+            
             messagesContainer.appendChild(messageElement);
         });
         
@@ -91,10 +132,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 messageInput.value = '';
                 // Перезагружаем сообщения
                 loadMessages(currentChatId);
+            } else {
+                console.error('Ошибка отправки сообщения:', result.error);
             }
         })
         .catch(error => {
             console.error('Ошибка отправки сообщения:', error);
         });
     }
+
+    // Автоматическое обновление сообщений каждые 2 секунды
+    setInterval(function() {
+        if (currentChatId) {
+            loadMessages(currentChatId);
+        }
+    }, 500);
 });

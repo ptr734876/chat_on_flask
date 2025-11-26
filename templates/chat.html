@@ -10,38 +10,47 @@
     <title>Chats - {{ current_user }}</title>
   </head>
   <body>
+    <!-- Скрытый элемент для передачи current_user в JavaScript -->
+    <div id="currentUser" data-username="{{ current_user }}" style="display: none;"></div>
+    
     <div class="sidebar">
-      {% for chat in chats %}
-      <div class="chat-item" data-chat-id="{{ chat[0] }}">
-        <div class="chat-info">
-          <div class="username">{{ chat[1] }}</div>
-          <div class="last-msg">
-            {{ chat[2] if chat[2] else "Нет сообщений" }}
+      <div class="chat-list">
+        {% for chat in chats %}
+        <div class="chat-item" data-chat-id="{{ chat[0] }}">
+          <div class="chat-info">
+            <div class="username">{{ chat[1] }}</div>
+            <div class="last-msg">
+              {{ chat[2] if chat[2] else "Нет сообщений" }}
+            </div>
           </div>
         </div>
+        {% endfor %}
       </div>
-      {% endfor %}
-      <div style="display: flex">
+      <div class="sidebar-footer">
         <span>Welcome, {{ current_user }}</span>
         <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
       </div>
     </div>
 
-    <div class="main" id="mainArea">
-      <div class="messages" id="messagesContainer">
-        <!-- сообщения -->
+    <div class="chat-area">
+      <div class="chat-header" id="chatHeader">
+        <div class="no-chat-selected">Выберите чат для начала общения</div>
       </div>
-
-      <div class="input-area">
-        <input
-          type="text"
-          class="msg-input"
-          id="messageInput"
-          placeholder="Введите сообщение..."
-        />
-        <button class="send-btn" id="sendButton">Отправить</button>
+      <div class="messages" id="messagesContainer">
+        <!-- Сообщения будут появляться здесь -->
       </div>
     </div>
+
+    <div class="input-area hidden" id="inputArea">
+      <input
+        type="text"
+        class="msg-input"
+        id="messageInput"
+        placeholder="Введите сообщение..."
+      />
+      <button class="send-btn" id="sendButton">Отправить</button>
+    </div>
+    
     <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
   </body>
 </html>
