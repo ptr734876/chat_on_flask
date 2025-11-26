@@ -1,19 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='base_style.css') }}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/base_style.css') }}"
+    />
     <title>MegaChatRL</title>
-</head>
-<body class="body">
+  </head>
+  <body>
     <h1>Mega Chat</h1>
-    <br>
-    <p style="margin: 0;">
-    <div class="btn">   
-        <a href="/register">Register</a>
-        <a href="/login">Login</a>
-    </div>
-    </p>
-</body>
+    <br />
+    {% if not user_login %}
+    <a href="/register" style="text-decoration: none;">
+      <button class="btn">Register</button>
+    </a>
+    <a href="/login" style="text-decoration: none;">
+      <button class="btn">Login</button>
+    </a>
+    {% else %}
+        <a href="/ChatPage" style="text-decoration: none;">
+      <button class="btn">Go Chat</button>
+    </a>
+    <a href="/logout" style="text-decoration: none;">
+      <button class="btn">Bye, {{user_login}}</button>
+    </a>
+    {% endif %}
+  </body>
 </html>

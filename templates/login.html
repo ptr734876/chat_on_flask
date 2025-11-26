@@ -3,16 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='login_style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login_style.css') }}">
     <title>MegaChatLogin</title>
 </head>
 <body class="body">
     <form action="/login" method="post">
-        {% if error %}
-            <div style="color: red; margin-bottom: 15px;">
-                {{ error }}
-            </div>
-        {% endif %}
         <div>
             <label for="user-login">Login: </label>
             <input type="text"
@@ -31,6 +26,8 @@
                    required
                    style="width: 150px; height: 30px;">
         </div>
+        <div>{% if error %} {{ error }} {% endif %}</div>
+
         <input style="width: 100px; height: 70px;" type="submit" value="Войти">
     </form>
 </body>

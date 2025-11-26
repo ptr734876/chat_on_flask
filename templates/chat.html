@@ -1,39 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='chat_style.css') }}">
-    <title>Chats</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/chat_style.css') }}"
+    />
+    <title>Chats - {{ current_user }}</title>
+  </head>
+  <body>
     <div class="sidebar">
-        {% for chat in chats %}
-        <div class="chat-item">
-            <div class="chat-info">
-                <div class="username">{{ chat[1] }}</div>
-                <div class="last-msg">{{ chat[2] if chat|length > 2 else "Нет сообщений" }}</div>
-            </div>
+      {% for chat in chats %}
+      <div class="chat-item" data-chat-id="{{ chat[0] }}">
+        <div class="chat-info">
+          <div class="username">{{ chat[1] }}</div>
+          <div class="last-msg">
+            {{ chat[2] if chat[2] else "Нет сообщений" }}
+          </div>
         </div>
-        {% endfor %}
+      </div>
+      {% endfor %}
+      <div style="display: flex">
+        <span>Welcome, {{ current_user }}</span>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+      </div>
     </div>
 
-    <div class="main">
-        <div class="messages">
-            <div class="message">
-                <div class="text">Привет! Как дела?</div>
-                <div class="time">14:30</div>
-            </div>
-            <div class="message my-message">
-                <div class="text">Всё отлично!</div>
-                <div class="time">14:32</div>
-            </div>
-        </div>
+    <div class="main" id="mainArea">
+      <div class="messages" id="messagesContainer">
+        <!-- сообщения -->
+      </div>
 
-        <div class="input-area">
-            <input type="text" class="msg-input" placeholder="Введите сообщение...">
-            <button class="send-btn">Отправить</button>
-        </div>
+      <div class="input-area">
+        <input
+          type="text"
+          class="msg-input"
+          id="messageInput"
+          placeholder="Введите сообщение..."
+        />
+        <button class="send-btn" id="sendButton">Отправить</button>
+      </div>
     </div>
-</body>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+  </body>
 </html>
